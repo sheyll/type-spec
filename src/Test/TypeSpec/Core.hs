@@ -86,9 +86,7 @@ instance
   => PrettyTypeSpec '(expectation1, expectation2)
   where
     prettyTypeSpec _ =
-      parens
-        (space <> prettyTypeSpec pe1
-        $$ comma <+> prettyTypeSpec pe2 <> space)
+        prettyTypeSpec pe1 $+$ prettyTypeSpec pe2 
       where pe1 = Proxy :: Proxy expectation1
             pe2 = Proxy :: Proxy expectation2
 

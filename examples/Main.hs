@@ -1,28 +1,26 @@
--- | Some examples for 'expr.TypeSpec'
+-- | Some examples for 'Test.TypeSpec'
 module Main where
 
 import Data.Kind
-import Data.Type.Bool
-import Data.Type.Equality
-import GHC.Exts
 import GHC.TypeLits
-import Test.TypeSpec
 import Test.TypeSpecCrazy
 
 main :: IO ()
 main = do
-  print spec0
+  print specHelloWorld
   print specGrouped
-  print specFamilyInstances
+  print specAliases
+  print specTuple
+  print specFamilyInstancesSuperCrazy
   print spec1
-  print spec2
-  print spec4
+  print specCrazy
+  print specInvalidCrazy
 
 -- * TypeSpec Examples
 
--- | Let's start of simple:
-spec0 :: Expect (Int `Isn't` Bool)
-spec0 = Valid
+-- | Let's start off simple:
+specHelloWorld :: Expect (Int `Isn't` Bool)
+specHelloWorld = Valid
 
 -- | We can also expect a bit more using lists and tuples:
 specGrouped
@@ -31,6 +29,28 @@ specGrouped
              , Bool `Is`    Bool  `ButNot`  String
              ]
 specGrouped = Valid
+
+specTuple ::
+  Explain "Type level tuples can also be used to group tests."
+    (They "accept only two elments"
+      '( (5 - 4) `Is` 1, (3 + 3) `Is` 6 `ButNot` (3 - 3) ) )
+specTuple = Valid
+
+-- * Some nice aliases
+
+type ALot = 1000
+
+specAliases ::
+  (Explain "There are a variety aliases for the basic combinators."
+    (Context "Basic Combinators"
+      (Describe "Context"
+        (It "labels expectations using 'It'"
+          (Describe "Describe"
+            (It's "an alias for It, just like They"
+              (It's "time for the first assertion"
+                (1000 `Is` ALot))))))))
+specAliases = Valid
+
 
 -- * More complex example
 
@@ -48,7 +68,14 @@ type family Count a :: Nat where
   Count (a,b,c) = 3
   Count (a,b,c,d) = 4
 
-specFamilyInstances ::
+-- A failing test case example:
+-- specFailing ::
+--     TypeSpec
+--       (It "counts the number of elements in a tuple"
+--           (Count ((),(),()) `ShouldBe` 4))
+-- specFailing = Valid
+
+specFamilyInstancesSuperCrazy ::
 
     "Only one title like this"
     ###########################
@@ -77,7 +104,7 @@ specFamilyInstances ::
      ]
 
 
-specFamilyInstances = Valid
+specFamilyInstancesSuperCrazy = Valid
 
 -- * More examples
 
@@ -86,24 +113,23 @@ spec1 ::
     (It "Allows explanations of types"  (ShouldBe Int Int))
 spec1 = Valid
 
-spec2 ::
+specCrazy ::
 
-   "Poly kinded assertions"
-   ########################
+    "Higher kinded assertions"
+   ###########################
 
    "ShouldBe accepts types of kind * -> *"
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   ShouldBe  Maybe Maybe
+       ShouldBe  Maybe Maybe
+    -* ShouldBe  []    []
+    -* ShouldBe  (->)  (->)
 
-spec2 = Valid
-
-spec3 :: Explain "TypeSpec of empty lists" '[]
-spec3 = Valid
+specCrazy = Valid
 
 -- --------------------------------------------------------
 
-type Spec4 =
+type SpecInvalidCrazy =
 
   "One of the following specs is not OK"
  #######################################
@@ -127,14 +153,5 @@ type Spec4 =
 
  TheseAreEqual    Maybe (Either Int)
 
-spec4 :: Spec4
-spec4 = Invalid
-
--- --------------------------------------------------------
-
-data TyFun1 :: Type -> Type -> Type
-type TyFun2 a b = a -> b
-
-type family SameType (a :: k1) (b :: k2) :: Bool where
-  SameType a a = 'True
-  SameType a b = 'False
+specInvalidCrazy :: SpecInvalidCrazy
+specInvalidCrazy = Invalid

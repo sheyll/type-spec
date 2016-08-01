@@ -2,6 +2,7 @@
 module Test.TypeSpec
   ( type Expect
   , type Explain
+  , type It's
   , type IsTheSameAs
   , type Is
   , type TheseAreEqual
@@ -62,3 +63,4 @@ type IsFalse = ShouldBeFalse
 type They message expectations = It message expectations
 type Describe = It
 type Context = It
+type It's = It

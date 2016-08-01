@@ -3,7 +3,6 @@ module Test.TypeSpec.Group
     ( type (-/-), type (-*) )
   where
 
-import Data.Kind
 import Data.Proxy
 import Test.TypeSpec.Core
 import Test.TypeSpec.Internal.Apply
