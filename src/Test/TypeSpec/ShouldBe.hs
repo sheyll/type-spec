@@ -10,7 +10,7 @@ module Test.TypeSpec.ShouldBe
 
 import Data.Kind
 import Data.Type.Bool
-import Data.Type.Equality
+
 import Data.Typeable
 import GHC.TypeLits
 import Test.TypeSpec.Core
@@ -24,7 +24,7 @@ import Type.Showtype
 data ShouldBeTrue :: expectation -> Type
 
 type instance EvalExpectation (ShouldBeTrue t) =
-    If (PolyKindEq t 'True)
+    If (EqExtra t 'True)
         (OK (ShouldBeTrue t))
         (FAILED
           ('Text "Should have been 'True: " ':<>: 'ShowType t))
@@ -33,7 +33,7 @@ type instance EvalExpectation (ShouldBeTrue t) =
 data ShouldBeFalse :: expectation -> Type
 
 type instance EvalExpectation (ShouldBeFalse t) =
-    If (PolyKindEq t 'False)
+    If (EqExtra t 'False)
         (OK (ShouldBeFalse t))
         (FAILED
           ('Text "Should have been 'False: " ':<>: 'ShowType t))
@@ -44,8 +44,8 @@ data ButNot :: shouldBe -> actual -> Type
 
 type instance
   EvalExpectation (ButNot (ShouldBe expected actual) other) =
-    If (expected == actual)
-      (If (expected == other)
+    If (EqExtra expected actual)
+      (If (EqExtra expected other)
           (FAILED
             ('Text "Expected type: "
              ':$$: 'Text "   " ':<>: 'ShowType expected
@@ -61,7 +61,7 @@ data ShouldBe :: expected -> actual -> Type
 
 type instance
   EvalExpectation (ShouldBe expected actual) =
-    If (PolyKindEq expected actual)
+    If (EqExtra expected actual)
         (OK (ShouldBe expected actual))
         (FAILED
           ('Text "Expected type: " ':<>: 'ShowType expected
@@ -72,15 +72,13 @@ data ShouldNotBe :: expected -> actual -> Type
 
 type instance
   EvalExpectation (ShouldNotBe expected actual) =
-    If (PolyKindEq expected actual)
+    If (EqExtra expected actual)
         (FAILED
           ('Text "Expected type: "
            ':$$: 'Text "   " ':<>: 'ShowType expected
            ':$$: 'Text "to be different from: "
            ':$$: 'Text "   " ':<>: 'ShowType actual))
         (OK (ShouldNotBe expected actual))
-
--- * PrettyTypeSpec instances
 
 instance PrettyTypeSpec (ShouldBeTrue a) where
   prettyTypeSpec _px =
@@ -120,4 +118,4 @@ instance
 
 -- | Pretty print a test prefix by a bullet-point.
 prettyBulletPoint :: Doc -> Doc
-prettyBulletPoint doc = text "•" <+> doc 
+prettyBulletPoint doc = text "•" <+> doc

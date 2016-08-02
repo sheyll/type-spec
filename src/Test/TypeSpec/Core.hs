@@ -1,7 +1,11 @@
 -- | Core of the TypeSpec abstractions. Import to add custom instances.
 module Test.TypeSpec.Core
-  ( TypeSpec (..)
+  (
+  -- * Core Data Type
+   TypeSpec (..)
+  -- * Expectations
   , type EvalExpectation
+  -- * Pretty Printing Support
   , PrettyTypeSpec(..)
   , prettyIndentation
   , nest'
@@ -16,7 +20,7 @@ import Test.TypeSpec.Internal.Apply
 import Test.TypeSpec.Internal.Result as ReExport
 import Text.PrettyPrint
 
--- * Type Level Specifcations
+
 
 -- | A type specification.
 data TypeSpec expectation  where
@@ -28,8 +32,6 @@ data TypeSpec expectation  where
   -- reject it - the expectation seem indeed implausible.
   Invalid :: (DontTry (EvalExpectation expectation))
         => TypeSpec expectation
-
--- * Expectations
 
 -- | An open family of type level expectation evaluators, that return  either @()@
 -- or an @ErrorMessage@.
@@ -48,13 +50,10 @@ type instance EvalExpectation '[] = OK '[]
 type instance EvalExpectation (expectation ': rest) =
   Cons'' <$> EvalExpectation expectation <*> EvalExpectation rest
 
--- * Pretty Printing
 
 -- | A class for pretty printing via the 'Show' instance of 'TypeSpec'.
 class PrettyTypeSpec (t :: k) where
   prettyTypeSpec :: proxy t -> Doc
-
--- * Printing/Showing
 
 instance PrettyTypeSpec t => Show (TypeSpec t) where
   show px@Valid =
@@ -86,7 +85,7 @@ instance
   => PrettyTypeSpec '(expectation1, expectation2)
   where
     prettyTypeSpec _ =
-        prettyTypeSpec pe1 $+$ prettyTypeSpec pe2 
+        prettyTypeSpec pe1 $+$ prettyTypeSpec pe2
       where pe1 = Proxy :: Proxy expectation1
             pe2 = Proxy :: Proxy expectation2
 

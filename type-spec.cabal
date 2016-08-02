@@ -1,5 +1,5 @@
 name:                 type-spec
-version:              0.1.0.1
+version:              0.2.0.0
 synopsis:             Type Level Specification by Example
 description:          Please see README.md
 homepage:             https://github.com/sheyll/type-spec#readme
@@ -10,8 +10,11 @@ maintainer:           sven.heyll@gmail.com
 copyright:            2016 Sven Heyll
 category:             Testing
 build-type:           Simple
--- extra-source-files:
-cabal-version:       >=1.10
+extra-source-files:   examples/Main.hs
+                    , README.md
+                    , stack.yaml
+                    , .travis.yml
+cabal-version:        >=1.10
 
 library
   hs-source-dirs:      src

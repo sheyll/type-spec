@@ -1,4 +1,4 @@
--- | Label expectations
+-- | Labels for expectations.
 module Test.TypeSpec.Label
     ( It )
   where

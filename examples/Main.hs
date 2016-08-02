@@ -1,7 +1,6 @@
 -- | Some examples for 'Test.TypeSpec'
 module Main where
 
-import Data.Kind
 import GHC.TypeLits
 import Test.TypeSpecCrazy
 
@@ -15,6 +14,7 @@ main = do
   print spec1
   print specCrazy
   print specInvalidCrazy
+  print specCrazyMoreNested
 
 -- * TypeSpec Examples
 
@@ -155,3 +155,37 @@ type SpecInvalidCrazy =
 
 specInvalidCrazy :: SpecInvalidCrazy
 specInvalidCrazy = Invalid
+
+
+specCrazyMoreNested ::
+
+  "Title"
+  ######
+
+    "Top-level "
+    ~~~~~~~~~~~~
+
+         "Nested:"
+         ~~~~~~~~~
+         Int `Is` Int
+                            -*-
+         Int `Is` Int
+                            -*-
+         Int `Is` Int
+
+                            -/-
+
+    "Top-level "
+    ~~~~~~~~~~~~
+
+         "Nested:"
+         ~~~~~~~~~
+         Int `Is` Int
+                            -*-
+             "Nested:"
+             ~~~~~~~~~
+             Int `Is` Int
+                                -*-
+             Int `Is` Int
+
+specCrazyMoreNested = Valid
