@@ -8,8 +8,6 @@ module Test.TypeSpec.Core
   -- * Pretty Printing Support
   , PrettyTypeSpec(..)
   , prettyIndentation
-  , nest'
-  , sentence
   , module ReExport
   )
   where
@@ -19,8 +17,6 @@ import Test.TypeSpec.Internal.Either ()
 import Test.TypeSpec.Internal.Apply
 import Test.TypeSpec.Internal.Result as ReExport
 import Text.PrettyPrint
-
-
 
 -- | A type specification.
 data TypeSpec expectation  where
@@ -36,8 +32,6 @@ data TypeSpec expectation  where
 -- | An open family of type level expectation evaluators, that return  either @()@
 -- or an @ErrorMessage@.
 type family EvalExpectation (expectation :: k) :: Result k
-
--- ** Combining/Grouping collections
 
 -- | Given a pair @(expectation1, expectation2)@ try to evaluate the first then,
 -- if no error was returned, the second.
@@ -67,25 +61,13 @@ instance PrettyTypeSpec t => Show (TypeSpec t) where
 prettyIndentation :: Int
 prettyIndentation = 2
 
--- | Nest using the default indention `prettyIndentation`.
-nest' :: Doc -> Doc
-nest' = nest prettyIndentation
-
--- | Print a /sentence/ with the second part 'hang'ing from the first.
--- Generate: @predicate: object@
-sentence :: String -> Doc -> Doc
-sentence predicate object =
-  hang (text predicate <> colon <> space) 5 object
-
--- * Default instances
-
 instance
     ( PrettyTypeSpec expectation1
     , PrettyTypeSpec expectation2 )
   => PrettyTypeSpec '(expectation1, expectation2)
   where
     prettyTypeSpec _ =
-        prettyTypeSpec pe1 $+$ prettyTypeSpec pe2
+        prettyTypeSpec pe1 $$ prettyTypeSpec pe2
       where pe1 = Proxy :: Proxy expectation1
             pe2 = Proxy :: Proxy expectation2
 
@@ -100,6 +82,6 @@ instance
   => PrettyTypeSpec (expectation ': rest)
   where
     prettyTypeSpec _ =
-        (prettyTypeSpec pe1) $+$ (prettyTypeSpec pe2)
+        (prettyTypeSpec pe1) $$ (prettyTypeSpec pe2)
       where pe1 = Proxy :: Proxy expectation
             pe2 = Proxy :: Proxy rest

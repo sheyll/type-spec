@@ -26,4 +26,4 @@ type instance
 instance (KnownSymbol msg, PrettyTypeSpec x) => PrettyTypeSpec (It msg x) where
   prettyTypeSpec _ =
     (text (symbolVal (Proxy :: Proxy msg)))
-    $+$ nest prettyIndentation (prettyTypeSpec (Proxy :: Proxy x))
+    $$ nest prettyIndentation (prettyTypeSpec (Proxy :: Proxy x))

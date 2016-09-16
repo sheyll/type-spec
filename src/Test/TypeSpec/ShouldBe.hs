@@ -10,15 +10,12 @@ module Test.TypeSpec.ShouldBe
 
 import Data.Kind
 import Data.Type.Bool
-
-import Data.Typeable
 import GHC.TypeLits
 import Test.TypeSpec.Core
 import Test.TypeSpec.Internal.Apply ()
 import Test.TypeSpec.Internal.Either ()
 import Test.TypeSpec.Internal.Equality
 import Text.PrettyPrint
-import Type.Showtype
 
 -- | State that a type is equal to the type level @True@.
 data ShouldBeTrue :: expectation -> Type
@@ -40,82 +37,68 @@ type instance EvalExpectation (ShouldBeFalse t) =
 
 -- | State that one type is different to two other types. This must always be
 -- used right next to a 'ShouldBe' pair, otherwise this will not work.
-data ButNot :: shouldBe -> actual -> Type
+data ButNot :: shouldBe -> shouldntBe -> Type
 
 type instance
-  EvalExpectation (ButNot (ShouldBe expected actual) other) =
-    If (EqExtra expected actual)
-      (If (EqExtra expected other)
+  EvalExpectation (ButNot (ShouldBe actual expected) other) =
+    If (EqExtra actual expected)
+      (If (EqExtra other expected)
           (FAILED
             ('Text "Expected type: "
              ':$$: 'Text "   " ':<>: 'ShowType expected
              ':$$: 'Text "to be different from: "
              ':$$: 'Text "   " ':<>: 'ShowType other))
-          (OK (ButNot (ShouldBe expected actual) other)))
+          (OK (ButNot (ShouldBe actual expected) other)))
       (FAILED
         ('Text "Expected type: " ':<>: 'ShowType expected
          ':$$: 'Text "Actual type:   " ':<>: 'ShowType actual))
 
 -- | State that two types or type constructs are boiled down to the same type.
-data ShouldBe :: expected -> actual -> Type
+data ShouldBe :: actual -> expected -> Type
 
 type instance
-  EvalExpectation (ShouldBe expected actual) =
-    If (EqExtra expected actual)
-        (OK (ShouldBe expected actual))
+  EvalExpectation (ShouldBe actual expected) =
+    If (EqExtra actual expected)
+        (OK (ShouldBe actual expected))
         (FAILED
           ('Text "Expected type: " ':<>: 'ShowType expected
            ':$$: 'Text "Actual type:   " ':<>: 'ShowType actual))
 
 -- | State that two types or type constructs are NOT the same type.
-data ShouldNotBe :: expected -> actual -> Type
+data ShouldNotBe :: actual -> expected -> Type
 
 type instance
-  EvalExpectation (ShouldNotBe expected actual) =
+  EvalExpectation (ShouldNotBe actual expected) =
     If (EqExtra expected actual)
         (FAILED
           ('Text "Expected type: "
            ':$$: 'Text "   " ':<>: 'ShowType expected
            ':$$: 'Text "to be different from: "
            ':$$: 'Text "   " ':<>: 'ShowType actual))
-        (OK (ShouldNotBe expected actual))
+        (OK (ShouldNotBe actual expected))
 
 instance PrettyTypeSpec (ShouldBeTrue a) where
   prettyTypeSpec _px =
-    prettyBulletPoint $ text "Type == True"
+    prettyBulletPoint "ShouldBeTrue a"
 
 instance PrettyTypeSpec (ShouldBeFalse a) where
   prettyTypeSpec _px =
-    prettyBulletPoint $ text "Type == False"
+    prettyBulletPoint "ShouldBeFalse a"
 
 instance PrettyTypeSpec (ShouldBe a b) where
   prettyTypeSpec _px =
-    prettyBulletPoint $ text "Types are equal"
+    prettyBulletPoint "a `ShouldBe` b"
 
-instance (Showtype a, Showtype b) => PrettyTypeSpec (ShouldNotBe a b) where
+instance PrettyTypeSpec (ShouldNotBe a b) where
   prettyTypeSpec _px =
-      prettyBulletPoint
-        $ sentence "Type"  (text expected)
-        $$ sentence "differs from" (text actual)
-    where
-      expected = showtype (Proxy :: Proxy a)
-      actual = showtype (Proxy :: Proxy b)
+      prettyBulletPoint "a `ShouldNotBe` b"
 
 instance
-    (a ~ (ShouldBe a0 a1)
-    , Showtype a0
-    , Showtype a1
-    , Showtype b )
+    (a ~ (ShouldBe a0 a1))
   => PrettyTypeSpec (ButNot a b) where
     prettyTypeSpec _ =
-      prettyBulletPoint
-        $ (sentence "Type"
-                 (text (showtype (Proxy :: Proxy a0))))
-        $$ (sentence "is equal to"
-                 (text (showtype (Proxy :: Proxy a1))))
-        $$ (sentence "but not to"
-                 (text (showtype (Proxy :: Proxy b))))
+      prettyBulletPoint  "a 'ShouldBe' b 'ButNot' c"
 
 -- | Pretty print a test prefix by a bullet-point.
-prettyBulletPoint :: Doc -> Doc
-prettyBulletPoint doc = text "•" <+> doc
+prettyBulletPoint :: String -> Doc
+prettyBulletPoint doc = text "•" <+> text doc
