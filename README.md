@@ -45,9 +45,9 @@ The output:
     Valid:
          Higher kinded assertions
            ShouldBe accepts types of kind * -> *
-             • Types are equal
-             • Types are equal
-             • Types are equal
+             (✓ Equal)
+             (✓ Equal)
+             (✓ Equal)
 
 If you like Lisp, this might be for you:
 
