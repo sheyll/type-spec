@@ -19,7 +19,7 @@ main = do
 -- * TypeSpec Examples
 
 -- | Let's start off simple:
-specHelloWorld :: Expect (Int `Isn't` Bool)
+specHelloWorld :: Explain "Expect something..." (Int `Isn't` Bool)
 specHelloWorld = Valid
 
 -- | We can also expect a bit more using lists and tuples:

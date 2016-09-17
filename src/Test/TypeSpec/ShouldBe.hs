@@ -79,26 +79,26 @@ type instance
 
 instance PrettyTypeSpec (ShouldBeTrue a) where
   prettyTypeSpec _px =
-    prettyBulletPoint "ShouldBeTrue a"
+    prettyCheck "True"
 
 instance PrettyTypeSpec (ShouldBeFalse a) where
   prettyTypeSpec _px =
-    prettyBulletPoint "ShouldBeFalse a"
+    prettyCheck "False"
 
 instance PrettyTypeSpec (ShouldBe a b) where
   prettyTypeSpec _px =
-    prettyBulletPoint "a `ShouldBe` b"
+    prettyCheck "Equal"
 
 instance PrettyTypeSpec (ShouldNotBe a b) where
   prettyTypeSpec _px =
-      prettyBulletPoint "a `ShouldNotBe` b"
+      prettyCheck "Different"
 
 instance
     (a ~ (ShouldBe a0 a1))
   => PrettyTypeSpec (ButNot a b) where
     prettyTypeSpec _ =
-      prettyBulletPoint  "a 'ShouldBe' b 'ButNot' c"
+      prettyCheck  "Restricted"
 
 -- | Pretty print a test prefix by a bullet-point.
-prettyBulletPoint :: String -> Doc
-prettyBulletPoint doc = text "•" <+> text doc
+prettyCheck :: String -> Doc
+prettyCheck doc = parens (text "✓" <+> text doc)

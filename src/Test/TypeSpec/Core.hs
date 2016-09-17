@@ -67,7 +67,7 @@ instance
   => PrettyTypeSpec '(expectation1, expectation2)
   where
     prettyTypeSpec _ =
-        prettyTypeSpec pe1 $$ prettyTypeSpec pe2
+        prettyTypeSpec pe1 <+> prettyTypeSpec pe2
       where pe1 = Proxy :: Proxy expectation1
             pe2 = Proxy :: Proxy expectation2
 
@@ -82,6 +82,6 @@ instance
   => PrettyTypeSpec (expectation ': rest)
   where
     prettyTypeSpec _ =
-        (prettyTypeSpec pe1) $$ (prettyTypeSpec pe2)
+        (prettyTypeSpec pe1) <+> (prettyTypeSpec pe2)
       where pe1 = Proxy :: Proxy expectation
             pe2 = Proxy :: Proxy rest

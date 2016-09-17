@@ -14,14 +14,14 @@ A small example:
     main :: IO ()
     main = print spec0
 
-    spec :: Expect (Int `Isn't` Bool)
+    spec :: Expect "Expect something..." (Int `Isn't` Bool)
     spec = Valid
 
 This will output:
 
     Valid:
-         • Type:  Int
-           differs from:  Bool
+         Expect something...
+           (✓ Different)
 
 Using the operators from _TypeSpecCrazy_:
 
@@ -72,11 +72,11 @@ This will output:
          There are a variety aliases for the basic combinators.
            Basic Combinators
              Context
-               Labels expectations using 'It'
+               labels expectations using 'It'
                  Describe
-                   is an alias for It, just like They
-                     is time for the first assertion
-                       • Types are equal
+                   an alias for It, just like They
+                     time for the first assertion
+                       (✓ Equal)
 
 The key feature is that the compiler checks the assertions and expectations made
 in a 'TypeSpec' and right away rejects invalid types.
