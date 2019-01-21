@@ -1,5 +1,5 @@
 name:                 type-spec
-version:              0.3.0.2
+version:              0.4.0.0
 synopsis:             Type Level Specification by Example
 description:          Please see README.md
 homepage:             https://github.com/sheyll/type-spec#readme
@@ -7,7 +7,7 @@ license:              BSD3
 license-file:         LICENSE
 author:               Sven Heyll
 maintainer:           sven.heyll@gmail.com
-copyright:            2016 Sven Heyll
+copyright:            2016-2019 Sven Heyll
 category:             Testing
 build-type:           Simple
 extra-source-files:   examples/Main.hs
@@ -66,7 +66,6 @@ test-suite examples
   ghc-options:         -Wall
   hs-source-dirs:      examples
   main-is:             Main.hs
-  default-language:    Haskell2010
   build-depends:       base >= 4.9 && < 5
                      , type-spec
   default-language:    Haskell2010

@@ -101,4 +101,4 @@ instance
 
 -- | Pretty print a test prefix by a bullet-point.
 prettyCheck :: String -> Doc
-prettyCheck doc = parens (text "✓" <+> text doc)
+prettyCheck doc = parens (text "OK" <+> text doc)
